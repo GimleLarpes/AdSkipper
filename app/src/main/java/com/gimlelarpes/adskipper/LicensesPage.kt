@@ -1,6 +1,7 @@
 package com.gimlelarpes.adskipper
 
 import android.widget.TextView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -46,10 +48,6 @@ fun LicensesPage(navController: NavController) {
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(
-                //colors = TopAppBarColors(
-                //    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                //    titleContentColor = MaterialTheme.colorScheme.primary,
-                //),
                 title = {
                     Text(text = stringResource(R.string.open_source_licenses),
                         style = Typography.titleLarge
@@ -63,8 +61,7 @@ fun LicensesPage(navController: NavController) {
                         )
                     }
                 },
-
-                )
+            )
         }
         //Top bar
     ) { innerPadding ->
@@ -72,7 +69,8 @@ fun LicensesPage(navController: NavController) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .verticalScroll(rememberScrollState()),
+                .verticalScroll(rememberScrollState())
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -88,7 +86,8 @@ fun DisplayLicense(header: Int, text: Int) {
     val context = LocalContext.current
     var licenseText by remember { mutableStateOf("") }
 
-    LaunchedEffect(key1 = text) { // Launch coroutine
+    //Launch coroutine
+    LaunchedEffect(key1 = text) {
         withContext(Dispatchers.IO) {
             licenseText = try {
                 context.resources.openRawResource(text).bufferedReader().use { it.readText() }
@@ -113,4 +112,3 @@ fun DisplayLicense(header: Int, text: Int) {
         )
     }
 }
-//set monospace, set background to a lighter color
