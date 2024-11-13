@@ -9,11 +9,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 class SettingsViewModel(
-    private val dataStore: DataStore<Preferences>
+    //private val dataStore: DataStore<Preferences>
 ): ViewModel() {
-    val adSkipEnabled: Flow<Boolean> = dataStore.data.map { preferences ->
-        preferences[SETTINGS_ENABLE_SERVICE] ?: false
-    }
+    //val adSkipEnabled: Flow<Boolean> = dataStore.data.map { preferences ->
+    //    preferences[SETTINGS_ENABLE_SERVICE] ?: false
+    //}
         //private set
 
     fun toggleAdSkip() {

@@ -83,7 +83,7 @@ fun SettingsPage(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AdSkipSwitch()
-                    val isServiceEnabled = viewModel.adSkipEnabled.collect()
+                    val isServiceEnabled = true//viewModel.adSkipEnabled.collect()
                     val statetext = if (isServiceEnabled) {
                         stringResource(R.string.ad_skip_enabled)
                     } else {
@@ -130,7 +130,7 @@ fun AdSkipSwitch() {
             style = typeFace,
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
-        val checked = viewModel.adSkipEnabled
+        val checked = true//viewModel.adSkipEnabled
         Switch(
             checked = checked,
             onCheckedChange = { viewModel.toggleAdSkip() },
