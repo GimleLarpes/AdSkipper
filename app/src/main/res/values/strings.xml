@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">AdSkipper</string>
+
+    <string name="ad_skip_switch_text">Skip ads</string>
+    <string name="ad_skip_disabled">AdSkip is disabled</string>
+    <string name="ad_skip_enabled">AdSkip is enabled</string>
+
+    <string name="open_source_licenses">Open source licenses</string>
 </resources>

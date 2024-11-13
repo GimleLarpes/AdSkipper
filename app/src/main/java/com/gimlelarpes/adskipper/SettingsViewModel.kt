@@ -10,4 +10,8 @@ class SettingsViewModel: ViewModel() {
     fun toggleAdSkip() {
         adSkipEnabled.value = !adSkipEnabled.value
     }
+
+    fun showLicenses() {
+        //Open window with licenses.txt
+    }
 }
