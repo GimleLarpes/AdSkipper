@@ -36,6 +36,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gimlelarpes.adskipper.ui.theme.Typography
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun SettingsPage(navController: NavController) {
@@ -80,7 +83,8 @@ fun SettingsPage(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AdSkipSwitch()
-                    val statetext = if (viewModel.adSkipEnabled.value) {
+                    val isServiceEnabled = viewModel.adSkipEnabled.collect()
+                    val statetext = if (isServiceEnabled) {
                         stringResource(R.string.ad_skip_enabled)
                     } else {
                         stringResource(R.string.ad_skip_disabled)
@@ -126,7 +130,7 @@ fun AdSkipSwitch() {
             style = typeFace,
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
-        val checked = viewModel.adSkipEnabled.value
+        val checked = viewModel.adSkipEnabled
         Switch(
             checked = checked,
             onCheckedChange = { viewModel.toggleAdSkip() },
