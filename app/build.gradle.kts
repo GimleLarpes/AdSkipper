@@ -59,4 +59,5 @@ dependencies {
 
     implementation(libs.core.splashscreen)
     implementation(libs.lifecycle.viewmodel.compose)
+    implementation(libs.navigation.compose)
 }
