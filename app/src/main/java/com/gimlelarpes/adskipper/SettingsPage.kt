@@ -13,11 +13,16 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -30,7 +35,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.gimlelarpes.adskipper.ui.theme.AdSkipperTheme
 import com.gimlelarpes.adskipper.ui.theme.Typography
 
 @Composable
@@ -62,7 +66,7 @@ fun SettingsPage(navController: NavController) {
                         painter = painterResource(id = R.drawable.ic_launcher),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier.padding(20.dp).fillMaxSize()//Modifier.size(280.dp)
+                        modifier = Modifier.padding(20.dp).fillMaxSize()
                     )
                 }
 
@@ -76,13 +80,13 @@ fun SettingsPage(navController: NavController) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AdSkipSwitch()
-                    val switch_text = if (viewModel.adSkipEnabled.value) {//WIP
+                    val statetext = if (viewModel.adSkipEnabled.value) {
                         stringResource(R.string.ad_skip_enabled)
                     } else {
                         stringResource(R.string.ad_skip_disabled)
                     }
                     Text(
-                        text = switch_text,
+                        text = statetext,
                         style = Typography.labelSmall,
                         modifier = Modifier.offset(y = -Typography.labelSmall.lineHeight.value.dp / 3)
                     )
@@ -122,9 +126,18 @@ fun AdSkipSwitch() {
             style = typeFace,
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
+        val checked = viewModel.adSkipEnabled.value
         Switch(
-            checked = viewModel.adSkipEnabled.value,
-            onCheckedChange = { viewModel.toggleAdSkip() }
+            checked = checked,
+            onCheckedChange = { viewModel.toggleAdSkip() },
+            thumbContent = if (checked) {
+                {
+                    Icon(imageVector = Icons.Filled.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(SwitchDefaults.IconSize)
+                    )
+                }
+            } else null
         )
     }
 }

@@ -1,10 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#FFBB86FC</color>
-    <color name="purple_500">#FF6200EE</color>
-    <color name="purple_700">#FF3700B3</color>
-    <color name="teal_200">#FF03DAC5</color>
-    <color name="teal_700">#FF018786</color>
+    <color name="green_90">#FFA7F2D0</color>
+    <color name="green_80">#FF8CD5B4</color>
+    <color name="green_40">#FF1D6B50</color>
+    <color name="green_30">#FF00513A</color>
+    <color name="green_20">#FF003827</color>
+    <color name="green_10">#FF002115</color>
+    <color name="greengray_90">#FFCFE9DA</color>
+    <color name="greengray_80">#FFB3CCBE</color>
+    <color name="greengray_40">#FF4C6358</color>
+    <color name="greengray_30">#FF354B41</color>
+    <color name="greengray_20">#FF1F352B</color>
+    <color name="greengray_10">#FF092017</color>
+    <color name="blue_90">#FFC1E8FC</color>
+    <color name="blue_80">#FFA6CCDF</color>
+    <color name="blue_40">#FF3E6374</color>
+    <color name="blue_30">#FF254B5B</color>
+    <color name="blue_20">#FF083544</color>
+    <color name="blue_10">#FF001F2A</color>
+    <color name="error_90">#FFFFDAD6</color>
+    <color name="error_80">#FFFFB4AB</color>
+    <color name="error_40">#FFBA1A1A</color>
+    <color name="error_30">#FF93000A</color>
+    <color name="error_20">#FF690005</color>
+    <color name="error_10">#FF410002</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 </resources>
