@@ -1,5 +1,6 @@
 package com.gimlelarpes.adskipper
 
+import android.content.Context
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -25,14 +26,20 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gimlelarpes.adskipper.ui.theme.Typography
@@ -41,8 +48,9 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 
 @Composable
-fun SettingsPage(navController: NavController) {
-    val viewModel = viewModel<SettingsViewModel>()
+fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
+    val isAdSkipEnabled = false//viewModel.isAdSkipEnabledFlow.collectAsStateWithLifecycle(initialValue = false).value
+
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
@@ -66,7 +74,7 @@ fun SettingsPage(navController: NavController) {
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.ic_launcher),
+                        painter = painterResource(id = R.drawable.adskippericon),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
                         modifier = Modifier.padding(20.dp).fillMaxSize()
@@ -82,9 +90,8 @@ fun SettingsPage(navController: NavController) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AdSkipSwitch()
-                    val isServiceEnabled = true//viewModel.adSkipEnabled.collect()
-                    val statetext = if (isServiceEnabled) {
+                    AdSkipSwitch(isAdSkipEnabled)
+                    val statetext = if (isAdSkipEnabled) {//Case, This depends on if the service is running
                         stringResource(R.string.ad_skip_enabled)
                     } else {
                         stringResource(R.string.ad_skip_disabled)
@@ -117,7 +124,7 @@ fun SettingsPage(navController: NavController) {
 }
 
 @Composable
-fun AdSkipSwitch() {
+fun AdSkipSwitch(checked: Boolean) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
@@ -125,15 +132,33 @@ fun AdSkipSwitch() {
     ) {
         val viewModel = viewModel<SettingsViewModel>()
         val typeFace = Typography.titleLarge
+        /*
+        var switchChecked = remember { mutableStateOf(checked).value }
+        val context = LocalContext.current
+
+        LaunchedEffect(key1 = Unit, key2 = switchChecked, key3 = context) {
+            viewModel.isAdSkipEnabledFlow.collect{ realChecked ->
+                switchChecked = realChecked
+            }
+            if (switchChecked != checked) {
+                viewModel.toggleAdSkip(context)
+            }
+        }*/
+
         Text(
             text = stringResource(R.string.ad_skip_switch_text),
             style = typeFace,
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
-        val checked = true//viewModel.adSkipEnabled
         Switch(
             checked = checked,
-            onCheckedChange = { viewModel.toggleAdSkip() },
+            onCheckedChange = { //newChecked ->
+                //switchChecked = newChecked
+                //viewModel.toggleAdSkip()
+                //LaunchedEffect(Unit) {
+                //    viewModel.toggleAdSkip()
+                //}
+            },
             thumbContent = if (checked) {
                 {
                     Icon(imageVector = Icons.Filled.Check,
