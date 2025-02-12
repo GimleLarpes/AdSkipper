@@ -49,7 +49,7 @@ import kotlinx.coroutines.flow.stateIn
 
 @Composable
 fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
-    val isAdSkipEnabled = false//viewModel.isAdSkipEnabledFlow.collectAsStateWithLifecycle(initialValue = false).value
+    val isAdSkipEnabled = viewModel.isAdSkipEnabledFlow.collectAsStateWithLifecycle(initialValue = false).value
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -130,7 +130,7 @@ fun AdSkipSwitch(checked: Boolean) {
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        val viewModel = viewModel<SettingsViewModel>()
+        //val viewModel = viewModel<SettingsViewModel>()
         val typeFace = Typography.titleLarge
         /*
         var switchChecked = remember { mutableStateOf(checked).value }
