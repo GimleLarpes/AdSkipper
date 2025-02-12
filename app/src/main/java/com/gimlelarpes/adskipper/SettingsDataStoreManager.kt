@@ -15,6 +15,7 @@ private object Keys {
     val SETTINGS_ENABLE_AD_SKIPPER_SERVICE = booleanPreferencesKey("enable_ad_skipper_service")
 }
 
+
 class SettingsDataStoreManager(context: Context) {
     private val dataStore = context.dataStore
 
@@ -22,7 +23,6 @@ class SettingsDataStoreManager(context: Context) {
         .map { preferences ->
             preferences[Keys.SETTINGS_ENABLE_AD_SKIPPER_SERVICE] ?: false
         }
-
 
     suspend fun setEnableAdSkipperService(value: Boolean) {
         dataStore.edit { preferences ->

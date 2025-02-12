@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 
 class SettingsViewModel(
@@ -28,13 +29,11 @@ class SettingsViewModel(
         //UPDATE SERVICE STATE
     }
 
+    //Check if service is supposed to be running
+    val isAdSkipEnabledFlow: Flow<Boolean> = dataStoreManager.enableAdSkipperService
+
     //Check if service is running
-    //private val isServiceRunning: Flow<Boolean> =  //this is a flow, this will be removed when added to is AdSkipEnabledFlow
-
-
-    // Read setting state using Flow (does not check if service is actually running), make it do that
-    val isAdSkipEnabledFlow: Flow<Boolean> = dataStoreManager.enableAdSkipperService //and [IS SERVICE RUNNING FLOW]
-
+    val isServiceRunningFlow: Flow<Boolean> = flowOf(false) //current value is placeholder, it's supposed to be [IS SERVICE RUNNING FLOW]
 }
 
 class SettingsViewModelFactory(

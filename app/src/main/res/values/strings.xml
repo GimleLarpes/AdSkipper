@@ -4,6 +4,8 @@
     <string name="ad_skip_switch_text">Skip ads</string>
     <string name="ad_skip_disabled">AdSkip is disabled</string>
     <string name="ad_skip_enabled">AdSkip is enabled</string>
+    <string name="ad_skip_starting">AdSkip is starting</string>
+    <string name="ad_skip_stopping">AdSkip is stopping</string>
     <string name="navigate_up_button">navigate up</string>
 
     <string name="open_source_licenses">Open source licenses</string>

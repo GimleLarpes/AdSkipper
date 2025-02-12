@@ -23,12 +23,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //Splash screen
         installSplashScreen()
 
         super.onCreate(savedInstanceState)
-
-        //Datastore and ViewModel
         dataStoreManager = SettingsDataStoreManager(context = this)
 
 
@@ -38,6 +35,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val viewModelFactory = SettingsViewModelFactory(dataStoreManager)
                 viewModel = ViewModelProvider(this, viewModelFactory)[SettingsViewModel::class.java]
+
                 NavHost(
                     navController = navController,
                     startDestination = Routes.SettingsPage,

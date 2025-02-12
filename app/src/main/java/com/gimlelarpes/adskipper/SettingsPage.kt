@@ -1,7 +1,11 @@
 package com.gimlelarpes.adskipper
 
-import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,6 +21,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -26,43 +32,44 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gimlelarpes.adskipper.ui.theme.Typography
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
-    val isAdSkipEnabled = viewModel.isAdSkipEnabledFlow.collectAsStateWithLifecycle(initialValue = false).value
+    val isAdSkipEnabled by viewModel.isAdSkipEnabledFlow.collectAsStateWithLifecycle(initialValue = false)
+    val isServiceRunning by viewModel.isServiceRunningFlow.collectAsStateWithLifecycle(initialValue = false)
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
     ) { innerPadding ->
         Column(
-            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             //Main column layout
             Column(
-                modifier = Modifier.fillMaxSize().weight(1f, false),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .weight(1f, false),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -70,14 +77,18 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                 val configuration = LocalConfiguration.current
                 Box(
                     modifier = if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
-                        Modifier.fillMaxSize(0.5f).offset(y = 50.dp) else Modifier.fillMaxHeight(0.5f),
+                        Modifier
+                            .fillMaxSize(0.5f)
+                            .offset(y = 50.dp) else Modifier.fillMaxHeight(0.5f),
                     contentAlignment = Alignment.CenterStart
                 ) {
                     Image(
                         painter = painterResource(id = R.drawable.adskippericon),
                         contentDescription = null,
                         contentScale = ContentScale.Fit,
-                        modifier = Modifier.padding(20.dp).fillMaxSize()
+                        modifier = Modifier
+                            .padding(20.dp)
+                            .fillMaxSize()
                     )
                 }
 
@@ -90,14 +101,15 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    AdSkipSwitch(isAdSkipEnabled)
-                    val statetext = if (isAdSkipEnabled) {//Case, This depends on if the service is running
-                        stringResource(R.string.ad_skip_enabled)
-                    } else {
-                        stringResource(R.string.ad_skip_disabled)
+                    AdSkipSwitch(viewModel)
+                    val stateText = when { // This should probably use more direct states, instead of saying what the app *should* do
+                        isAdSkipEnabled and !isServiceRunning -> stringResource(R.string.ad_skip_starting)
+                        !isAdSkipEnabled and isServiceRunning -> stringResource(R.string.ad_skip_stopping)
+                        isAdSkipEnabled and isServiceRunning -> stringResource(R.string.ad_skip_enabled)
+                        else -> stringResource(R.string.ad_skip_disabled)
                     }
                     Text(
-                        text = statetext,
+                        text = stateText,
                         style = Typography.labelSmall,
                         modifier = Modifier.offset(y = -Typography.labelSmall.lineHeight.value.dp / 3)
                     )
@@ -124,26 +136,17 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
 }
 
 @Composable
-fun AdSkipSwitch(checked: Boolean) {
+fun AdSkipSwitch(viewModel: SettingsViewModel = viewModel()) {
+    val isAdSkipEnabled by viewModel.isAdSkipEnabledFlow.collectAsStateWithLifecycle(initialValue = false)
+    val isServiceRunning by viewModel.isServiceRunningFlow.collectAsStateWithLifecycle(initialValue = false)
+    val coroutineScope = rememberCoroutineScope()
+
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        //val viewModel = viewModel<SettingsViewModel>()
         val typeFace = Typography.titleLarge
-        /*
-        var switchChecked = remember { mutableStateOf(checked).value }
-        val context = LocalContext.current
-
-        LaunchedEffect(key1 = Unit, key2 = switchChecked, key3 = context) {
-            viewModel.isAdSkipEnabledFlow.collect{ realChecked ->
-                switchChecked = realChecked
-            }
-            if (switchChecked != checked) {
-                viewModel.toggleAdSkip(context)
-            }
-        }*/
 
         Text(
             text = stringResource(R.string.ad_skip_switch_text),
@@ -151,15 +154,17 @@ fun AdSkipSwitch(checked: Boolean) {
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
         Switch(
-            checked = checked,
-            onCheckedChange = { //newChecked ->
-                //switchChecked = newChecked
-                //viewModel.toggleAdSkip()
-                //LaunchedEffect(Unit) {
-                //    viewModel.toggleAdSkip()
-                //}
+            checked = isServiceRunning,
+            onCheckedChange = { newChecked ->
+                coroutineScope.launch {
+                    viewModel.setEnableAdSkipperService(newChecked)
+                }
             },
-            thumbContent = if (checked) {
+            thumbContent = if (isAdSkipEnabled xor isServiceRunning) {
+                {
+                    LoadingIcon() // This is a bit scuffed
+                }
+            } else if (isAdSkipEnabled) {
                 {
                     Icon(imageVector = Icons.Filled.Check,
                         contentDescription = null,
@@ -169,4 +174,25 @@ fun AdSkipSwitch(checked: Boolean) {
             } else null
         )
     }
+}
+
+@Composable
+fun LoadingIcon() {
+    val infiniteTransition = rememberInfiniteTransition(label = "LoadingIcon")
+    val angle by infiniteTransition.animateFloat(
+        initialValue = 0F,
+        targetValue = 360F,
+        animationSpec = infiniteRepeatable(
+            animation = tween(durationMillis = 750,
+                              easing = LinearEasing)
+        ), label = "LoadingIcon"
+    )
+
+    Icon(
+        imageVector = Icons.Filled.Refresh,
+        contentDescription = null,
+        modifier = Modifier
+            .size(SwitchDefaults.IconSize)
+            .rotate(angle)
+    )
 }

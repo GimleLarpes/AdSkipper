@@ -63,6 +63,7 @@ fun LicensesPage(navController: NavController) {
                 },
             )
         }
+
         //Top bar
     ) { innerPadding ->
         Column(
