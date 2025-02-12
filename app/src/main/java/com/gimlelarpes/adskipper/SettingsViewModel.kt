@@ -17,23 +17,33 @@ class SettingsViewModel(
     private val dataStoreManager: SettingsDataStoreManager
 ): ViewModel() {
 
+    private val service: AdSkipperAccessibilityService? get() {
+        return AdSkipperAccessibilityService.getInstance()
+    }
 
-    //Toggle AdSkip setting
+    // Update settings
     fun setEnableAdSkipperService(value: Boolean) {
         viewModelScope.launch() {
             dataStoreManager.setEnableAdSkipperService(value)
         }
     }
-
-    fun updateServiceState() {
-        //UPDATE SERVICE STATE
+    fun setEnableAdMute(value: Boolean) {
+        viewModelScope.launch() {
+            dataStoreManager.setEnableAdMute(value)
+        }
     }
+
 
     //Check if service is supposed to be running
     val isAdSkipEnabledFlow: Flow<Boolean> = dataStoreManager.enableAdSkipperService
+    val isAdMuteEnabledFlow: Flow<Boolean> = dataStoreManager.enableAdMute
 
     //Check if service is running
-    val isServiceRunningFlow: Flow<Boolean> = flowOf(false) //current value is placeholder, it's supposed to be [IS SERVICE RUNNING FLOW]
+    val isServiceRunningFlow: Flow<Boolean> = service?.serviceRunningFlow ?: flowOf(false)
+
+
+    // Enable Service
+
 }
 
 class SettingsViewModelFactory(

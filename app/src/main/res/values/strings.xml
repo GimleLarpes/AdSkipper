@@ -1,7 +1,10 @@
 <resources>
     <string name="app_name">AdSkipper</string>
+    <string name="accessibility_service_label">AdSkipper</string>
+    <string name="accessibility_service_description">This service skips and optionally mutes advertisements on YouTube.</string>
 
     <string name="ad_skip_switch_text">Skip ads</string>
+    <string name="ad_skip_mute_ads">Mute ads</string>
     <string name="ad_skip_disabled">AdSkip is disabled</string>
     <string name="ad_skip_enabled">AdSkip is enabled</string>
     <string name="ad_skip_starting">AdSkip is starting</string>

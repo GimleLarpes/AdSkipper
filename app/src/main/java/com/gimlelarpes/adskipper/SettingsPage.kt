@@ -154,7 +154,7 @@ fun AdSkipSwitch(viewModel: SettingsViewModel = viewModel()) {
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
         Switch(
-            checked = isServiceRunning,
+            checked = isAdSkipEnabled,
             onCheckedChange = { newChecked ->
                 coroutineScope.launch {
                     viewModel.setEnableAdSkipperService(newChecked)
@@ -162,7 +162,7 @@ fun AdSkipSwitch(viewModel: SettingsViewModel = viewModel()) {
             },
             thumbContent = if (isAdSkipEnabled xor isServiceRunning) {
                 {
-                    LoadingIcon() // This is a bit scuffed
+                    LoadingIcon()
                 }
             } else if (isAdSkipEnabled) {
                 {
