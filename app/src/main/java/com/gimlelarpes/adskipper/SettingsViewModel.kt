@@ -66,7 +66,6 @@ class SettingsViewModel(
         return false
     }
 
-
     // Enable Service
     fun enableAccessibilityService() {
         val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
