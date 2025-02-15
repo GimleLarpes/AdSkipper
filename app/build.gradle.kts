@@ -18,13 +18,27 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        create("releaseSigning") {
+            storeFile = file("C:/Users/gimle/keystores/upload-keystore.jks")
+            storePassword = System.getenv("KSTOREPWD")
+            keyAlias = "AdSkipper"
+            keyPassword = System.getenv("KEYPWD")
+        }
+    }
+
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            signingConfig = signingConfigs.getByName("releaseSigning")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isDebuggable = true
         }
     }
     compileOptions {
