@@ -1,3 +1,5 @@
+@file:Suppress("PrivatePropertyName")
+
 package com.gimlelarpes.adskipper
 
 import android.accessibilityservice.AccessibilityService

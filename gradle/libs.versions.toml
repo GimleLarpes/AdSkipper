@@ -1,5 +1,5 @@
 [versions]
-agp = "8.8.0"
+agp = "8.8.1"
 kotlin = "2.0.0"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -7,12 +7,12 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
-composeBom = "2025.01.01"
+composeBom = "2025.02.00"
 core-splashscreen = "1.0.1"
 lifecycle-viewmodel-compose = "2.8.7"
-navigation-compose = "2.8.6"
+navigation-compose = "2.8.7"
 datastore-preferences = "1.1.2"
-ui-text-google-fonts = "1.7.7"
+ui-text-google-fonts = "1.7.8"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
