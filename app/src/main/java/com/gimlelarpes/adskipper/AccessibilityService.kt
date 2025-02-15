@@ -1,22 +1,15 @@
 package com.gimlelarpes.adskipper
 
 import android.accessibilityservice.AccessibilityService
-import android.media.AudioManager
-import android.content.Context
 import android.content.Intent
-import android.os.Bundle
+import android.media.AudioManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
-import android.widget.Button
-import androidx.compose.runtime.getValue
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.runBlocking
 
 class AdSkipperAccessibilityService: AccessibilityService() {
@@ -25,9 +18,9 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     private val SKIP_AD_BUTTON_ID = "com.google.android.youtube:id/skip_ad_button"
     private val CLOSE_AD_PANEL_BUTTON_ID = "com.google.android.youtube:id/close_panel_ad_button" //WHAT IS THE REAL RESOURCE ID?
     private val AD_PROGRESS_TEXT = "com.google.android.youtube:id/ad_progress_text"
-    private val AD_LEARN_MORE_BUTTON_ID = "com.google.android.youtube:id/player_learn_more_button"
-    private val APP_PROMO_AD_CTA_OVERLAY = "com.google.android.youtube:id/app_promo_ad_cta_overlay"
-    private val AD_COUNTDOWN = "com.google.android.youtube:id/ad_countdown"
+    //private val AD_LEARN_MORE_BUTTON_ID = "com.google.android.youtube:id/player_learn_more_button"
+    //private val APP_PROMO_AD_CTA_OVERLAY = "com.google.android.youtube:id/app_promo_ad_cta_overlay"
+    //private val AD_COUNTDOWN = "com.google.android.youtube:id/ad_countdown"
 
     private lateinit var dataStoreManager: SettingsDataStoreManager
     private lateinit var audioManager: AudioManager

@@ -1,7 +1,5 @@
 package com.gimlelarpes.adskipper
 
-import android.R
-import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.AccessibilityServiceInfo
 import android.app.Application
 import android.content.Context
@@ -9,32 +7,20 @@ import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import android.content.pm.ServiceInfo
 import android.provider.Settings
-import android.util.Log
 import android.view.accessibility.AccessibilityManager
-import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.startActivity
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
-import androidx.datastore.preferences.core.Preferences
-import androidx.datastore.preferences.preferencesDataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flattenMerge
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import kotlin.reflect.typeOf
 
 class SettingsViewModel(
     private val dataStoreManager: SettingsDataStoreManager,
-    private val application: Application
+    application: Application
 ): ViewModel() {
 
     val applicationContext: Context = application
@@ -46,12 +32,12 @@ class SettingsViewModel(
 
     // Update settings
     fun setEnableAdSkipperService(value: Boolean) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             dataStoreManager.setEnableAdSkipperService(value)
         }
     }
     fun setEnableAdMute(value: Boolean) {
-        viewModelScope.launch() {
+        viewModelScope.launch {
             dataStoreManager.setEnableAdMute(value)
         }
     }

@@ -1,8 +1,8 @@
 package com.gimlelarpes.adskipper
 
 import android.content.Context
-import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -21,12 +21,12 @@ class SettingsDataStoreManager(context: Context) {
     // Get values
     val enableAdSkipperService: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[Keys.SETTINGS_ENABLE_AD_SKIPPER_SERVICE] ?: false
+            preferences[Keys.SETTINGS_ENABLE_AD_SKIPPER_SERVICE] == true
         }
 
     val enableAdMute: Flow<Boolean> = dataStore.data
         .map { preferences ->
-            preferences[Keys.SETTINGS_ENABLE_AD_MUTE] ?: true
+            preferences[Keys.SETTINGS_ENABLE_AD_MUTE] != false
         }
 
     // Edit values
