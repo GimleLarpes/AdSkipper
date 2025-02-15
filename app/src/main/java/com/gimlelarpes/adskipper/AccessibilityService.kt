@@ -16,13 +16,17 @@ import kotlinx.coroutines.runBlocking
 
 class AdSkipperAccessibilityService: AccessibilityService() {
 
+    // COMPILE LIST OF POSSIBLE IDS AND TEST THEM OUT
+    // Figure out floaty vs modern - also only look for type="id"
     private val TAG = "AdSkipperService"
-    private val SKIP_AD_BUTTON_ID = "com.google.android.youtube:id/skip_ad_button"
-    private val CLOSE_AD_PANEL_BUTTON_ID = "com.google.android.youtube:id/close_panel_ad_button" //WHAT IS THE REAL RESOURCE ID?
-    private val AD_PROGRESS_TEXT = "com.google.android.youtube:id/ad_progress_text"
-    //private val AD_LEARN_MORE_BUTTON_ID = "com.google.android.youtube:id/player_learn_more_button"
-    //private val APP_PROMO_AD_CTA_OVERLAY = "com.google.android.youtube:id/app_promo_ad_cta_overlay"
-    //private val AD_COUNTDOWN = "com.google.android.youtube:id/ad_countdown"
+    private val BASE = "com.google.android.youtube:id/"
+    private val FLOATY = "floaty_bar_"
+    private val SKIP_AD_BUTTON_ID = "skip_ad_button" // This doesn't work for the floaty
+    private val CLOSE_AD_PANEL_BUTTON_ID = "panel_ad_close" //WHAT IS THE REAL RESOURCE ID?
+    private val AD_PROGRESS_TEXT = "ad_progress_text"
+    private val AD_LEARN_MORE_BUTTON_ID = "player_learn_more_button"
+    private val APP_PROMO_AD_CTA_OVERLAY = "app_promo_ad_cta_overlay"
+    private val AD_COUNTDOWN = "ad_countdown"
 
     private lateinit var dataStoreManager: SettingsDataStoreManager
     private lateinit var audioManager: AudioManager
@@ -42,6 +46,11 @@ class AdSkipperAccessibilityService: AccessibilityService() {
         _isServiceRunning.value = false
         Log.v(TAG, "onDestroy fired")
         super.onDestroy()
+    }
+
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        Log.i(TAG, "onTaskRemoved fired")
+        super.onTaskRemoved(rootIntent)
     }
 
     override fun onInterrupt() {
@@ -125,13 +134,27 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             }
 
             // Target elements
-            val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_PROGRESS_TEXT)?.getOrNull(0)
-            val adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(CLOSE_AD_PANEL_BUTTON_ID)?.getOrNull(0)
+            // Miniplayer active if
+            //val playerActive = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}watch_player")?.getOrNull(0)
+            val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}${FLOATY}controls_view")?.getOrNull(0)
+            // WHAT ARE THE floaty_bar EQUIVALENTS?
+            val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$AD_PROGRESS_TEXT")?.getOrNull(0)
+            val adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
 
             // Other ad-related elements
             //val adAppPromoCtaOverlay = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(APP_PROMO_AD_CTA_OVERLAY)?.getOrNull(0)
             //val adLearnMore = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_LEARN_MORE_BUTTON_ID)?.getOrNull(0)
             //val adCountdown = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_COUNTDOWN)?.getOrNull(0)
+            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$FLOATY$SKIP_AD_BUTTON_ID")?.getOrNull(0)
+
+            //DEBUG STUFF
+            if (test != null) {
+                Log.v(TAG, "OTHER THING EXISTS")
+            }
+            if (miniPlayer != null) {
+                Log.v(TAG, "MINIPLAYER EXISTS")
+            }
+            //
 
             // Visibility check
             if (adProgressText==null && adClosePanelButton==null) {
