@@ -3,7 +3,8 @@
     <string name="accessibility_service_label">AdSkipper</string>
     <string name="accessibility_service_description">This service skips and optionally mutes advertisements on YouTube.</string>
 
-    <string name="ad_skip_switch_text">Skip ads</string>
+    <!-- Settings UI -->
+    <string name="ad_skip_skip_ads">Skip ads</string>
     <string name="ad_skip_mute_ads">Mute ads</string>
     <string name="ad_skip_disabled">AdSkip is disabled</string>
     <string name="ad_skip_enabled">AdSkip is enabled</string>
@@ -11,6 +12,13 @@
     <string name="ad_skip_stopping">AdSkip is stopping</string>
     <string name="navigate_up_button">navigate up</string>
 
+    <!-- Accessibility Service Dialog -->
+    <string name="dialog_title">You\'re almost there!</string>
+    <string name="dialog_ok">OK</string>
+    <string name="dialog_cancel">Cancel</string>
+    <string name="dialog_text">To enable AdSkipper, enable it in the Accessibility Settings.</string>
+
+    <!-- Licenses Page -->
     <string name="open_source_licenses">Open source licenses</string>
     <string name="license_adskipper">AdSkipper</string>
     <string name="license_fonts">Fonts</string>

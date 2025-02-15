@@ -33,7 +33,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             AdSkipperTheme {
                 val navController = rememberNavController()
-                val viewModelFactory = SettingsViewModelFactory(dataStoreManager)
+                val viewModelFactory = SettingsViewModelFactory(dataStoreManager, application)
                 viewModel = ViewModelProvider(this, viewModelFactory)[SettingsViewModel::class.java]
 
                 NavHost(

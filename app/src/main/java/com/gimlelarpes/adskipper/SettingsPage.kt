@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -102,7 +101,7 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     AdSkipSwitch(viewModel)
-                    val stateText = when { // This should probably use more direct states, instead of saying what the app *should* do
+                    val stateText = when {
                         isAdSkipEnabled and !isServiceRunning -> stringResource(R.string.ad_skip_starting)
                         !isAdSkipEnabled and isServiceRunning -> stringResource(R.string.ad_skip_stopping)
                         isAdSkipEnabled and isServiceRunning -> stringResource(R.string.ad_skip_enabled)
@@ -149,15 +148,15 @@ fun AdSkipSwitch(viewModel: SettingsViewModel = viewModel()) {
         val typeFace = Typography.titleLarge
 
         Text(
-            text = stringResource(R.string.ad_skip_switch_text),
+            text = stringResource(R.string.ad_skip_skip_ads),
             style = typeFace,
             modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
         )
         Switch(
-            checked = isAdSkipEnabled,
+            checked = isServiceRunning,
             onCheckedChange = { newChecked ->
                 coroutineScope.launch {
-                    viewModel.setEnableAdSkipperService(newChecked)
+                    setEnableAccessibilityService(viewModel, newChecked)
                 }
             },
             thumbContent = if (isAdSkipEnabled xor isServiceRunning) {
@@ -195,4 +194,26 @@ fun LoadingIcon() {
             .size(SwitchDefaults.IconSize)
             .rotate(angle)
     )
+}
+
+// Enable and disable AdSkipperAccessibilityService
+fun setEnableAccessibilityService(viewModel: SettingsViewModel, newChecked: Boolean) {
+    viewModel.setEnableAdSkipperService(newChecked)
+
+    //Branch depending on if service is running
+    if (newChecked) {
+        if (viewModel.isAccessibilityServiceRunning) {
+            return
+        }
+        enableAccessibilityService(viewModel)
+
+    } else {
+        disableAccessibilityService(viewModel)
+    }
+}
+fun enableAccessibilityService(viewModel: SettingsViewModel) {
+    viewModel.enableAccessibilityService()
+}
+fun disableAccessibilityService(viewModel: SettingsViewModel) {
+    viewModel.disableAccessibilityService()
 }
