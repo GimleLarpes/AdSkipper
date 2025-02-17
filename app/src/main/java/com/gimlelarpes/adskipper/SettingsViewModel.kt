@@ -41,13 +41,21 @@ class SettingsViewModel(
             dataStoreManager.setEnableAdMute(value)
         }
     }
+    fun setNotificationTimeout(value: Long) {
+        viewModelScope.launch {
+            dataStoreManager.setNotificationTimeout(value)
+        }
+        // Update timeout
+        service?.serviceInfo?.notificationTimeout = value // This feels sketchy
+    }
 
 
-    //Check if service is supposed to be running
+    // Get settings
     val isAdSkipEnabledFlow: Flow<Boolean> = dataStoreManager.enableAdSkipperService
     val isAdMuteEnabledFlow: Flow<Boolean> = dataStoreManager.enableAdMute
+    val notificationTimeoutFlow: Flow<Long> = dataStoreManager.notificationTimeout
 
-    //Check if service is running
+    // Check if service is running
     @OptIn(ExperimentalCoroutinesApi::class)
     val isServiceRunningFlow: Flow<Boolean> = flow { emit(service) }.flatMapLatest { currentService -> currentService?.serviceRunningFlow ?: flowOf(false) }
 

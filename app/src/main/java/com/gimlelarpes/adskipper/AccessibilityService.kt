@@ -16,17 +16,14 @@ import kotlinx.coroutines.runBlocking
 
 class AdSkipperAccessibilityService: AccessibilityService() {
 
-    // COMPILE LIST OF POSSIBLE IDS AND TEST THEM OUT
-    // Figure out floaty vs modern - also only look for type="id"
     private val TAG = "AdSkipperService"
     private val BASE = "com.google.android.youtube:id/"
-    private val FLOATY = "floaty_bar_"
-    private val SKIP_AD_BUTTON_ID = "skip_ad_button" // This doesn't work for the floaty
-    private val CLOSE_AD_PANEL_BUTTON_ID = "panel_ad_close" //WHAT IS THE REAL RESOURCE ID?
+    private val MODERN = "modern_"
+    private val SKIP_AD_BUTTON = "skip_ad_button"
+    private val SKIP_AD_BUTTON_MINIPLAYER = "miniplayer_skip_ad_button"
+    private val CLOSE_AD_PANEL_BUTTON_ID = "NOTHERE" //WHAT IS THE REAL RESOURCE ID?
     private val AD_PROGRESS_TEXT = "ad_progress_text"
-    private val AD_LEARN_MORE_BUTTON_ID = "player_learn_more_button"
-    private val APP_PROMO_AD_CTA_OVERLAY = "app_promo_ad_cta_overlay"
-    private val AD_COUNTDOWN = "ad_countdown"
+    private val AD_BADGE_MINIPLAYER = "miniplayer_ad_badge"
 
     private lateinit var dataStoreManager: SettingsDataStoreManager
     private lateinit var audioManager: AudioManager
@@ -124,7 +121,9 @@ class AdSkipperAccessibilityService: AccessibilityService() {
         }
     }
 
-
+    // TODO: Find panel ad close button
+    // TODO: Implement settings
+    // TODO: Detect Ads when in inbetween state
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
         try {
@@ -134,41 +133,64 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             }
 
             // Target elements
-            // Miniplayer active if
-            //val playerActive = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}watch_player")?.getOrNull(0)
-            val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}${FLOATY}controls_view")?.getOrNull(0)
-            // WHAT ARE THE floaty_bar EQUIVALENTS?
+            val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$AD_BADGE_MINIPLAYER")?.getOrNull(0)
             val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$AD_PROGRESS_TEXT")?.getOrNull(0)
-            val adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
+
+            val adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0) // UNKNOWN
 
             // Other ad-related elements
             //val adAppPromoCtaOverlay = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(APP_PROMO_AD_CTA_OVERLAY)?.getOrNull(0)
             //val adLearnMore = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_LEARN_MORE_BUTTON_ID)?.getOrNull(0)
             //val adCountdown = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_COUNTDOWN)?.getOrNull(0)
-            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$FLOATY$SKIP_AD_BUTTON_ID")?.getOrNull(0)
+            //val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
+            val test2 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}ad_cta_button")?.getOrNull(0)
+            //val test3 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0)
+            //val test4 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_content")?.getOrNull(0)
+
+            // Panels that aren't it (retest, since stuff broke before)
+            // default_promo_panel
+            // default_promo_panel_modern_type
+            // app_engagement_panel
 
             //DEBUG STUFF
-            if (test != null) {
-                Log.v(TAG, "OTHER THING EXISTS")
+            /*if (test != null) {
+                Log.w(TAG, "miniplayer_ad_skip THING EXISTS") // Can indeed exist, doesn't seem to always work
+            }*/
+            if (test2 != null) {
+                Log.w(TAG, "ad_cta_button EXISTS")
+                if (test2.isClickable) {
+                    Log.w(TAG, "ad_cta_button CLICKABLE")
+                }
             }
-            if (miniPlayer != null) {
-                Log.v(TAG, "MINIPLAYER EXISTS")
+            /*if (test3 != null) {
+                Log.w(TAG, "engagement_panel EXISTS") // This class is used to display the panel ads (and all other panels), works (not what i need tho)
             }
+            if (test4 != null) {
+                Log.w(TAG, "engagement_content EXISTS")
+            }*/
             //
 
             // Visibility check
-            if (adProgressText==null && adClosePanelButton==null) {
+            if (adProgressText==null && miniPlayer==null && adClosePanelButton==null) {
                 unMuteMedia()
                 Log.v(TAG, "No ads visible.")
                 return
 
-            } else if (adProgressText==null) {
+            } else if (adProgressText==null && miniPlayer==null) {
                 closeAdPanel(adClosePanelButton)
                 unMuteMedia()
                 return
 
             } else {
-                val adSkipButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(SKIP_AD_BUTTON_ID)?.getOrNull(0)
+                // Video ad is visible, get adskip button
+                val adSkipButton = if (miniPlayer == null) {
+                    // Normal - I'm guessing they're switching things up currently and will move to modern adskipbutton
+                    rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$SKIP_AD_BUTTON")?.getOrNull(0) ?: rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$SKIP_AD_BUTTON")?.getOrNull(0)
+
+                } else {
+                    //Miniplayer
+                    rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
+                }
                 Log.v(TAG, "Ad is visible, attempting to skip...")
 
                 // Ad visible
