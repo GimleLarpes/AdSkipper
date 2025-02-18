@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 @Immutable
 data class ExtendedColors(
-    val surfaceHighContrast: Color
+    val surfaceHighContrast: Color,
 )
 
 val LocalExtendedColorScheme = staticCompositionLocalOf {

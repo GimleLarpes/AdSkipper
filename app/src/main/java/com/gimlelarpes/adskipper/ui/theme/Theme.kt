@@ -11,35 +11,35 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Green40,
-    secondary = GreenGrey40,
-    tertiary = Blue40,
+    primary = Primary40,
+    secondary = Secondary40,
+    tertiary = Tertriary40,
     error = Error40,
 
-    onPrimary = Green20,
-    onSecondary = GreenGrey20,
-    onTertiary = Blue20,
+    onPrimary = Primary20,
+    onSecondary = Secondary20,
+    onTertiary = Tertriary20,
     onError = Error20,
 
-    primaryContainer = Green30,
-    secondaryContainer = GreenGrey30,
-    tertiaryContainer = Blue30,
+    primaryContainer = Primary30,
+    secondaryContainer = Secondary30,
+    tertiaryContainer = Tertriary30,
     errorContainer = Error30,
 
-    onPrimaryContainer = Green90,
-    onSecondaryContainer = GreenGrey90,
-    onTertiaryContainer = Blue90,
+    onPrimaryContainer = Primary90,
+    onSecondaryContainer = Secondary90,
+    onTertiaryContainer = Tertriary90,
     onErrorContainer = Error90,
 
-    inversePrimary = Green80,
+    inversePrimary = Primary80,
 
     surfaceDim = DarkGrey,
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Green80,
-    secondary = GreenGrey80,
-    tertiary = Blue80,
+    primary = Primary80,
+    secondary = Secondary80,
+    tertiary = Tertriary80,
     error = Error80,
 
     onPrimary = Grey,
@@ -47,17 +47,17 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = Grey,
     onError = Grey,
 
-    primaryContainer = Green90,
-    secondaryContainer = GreenGrey90,
-    tertiaryContainer = Blue90,
+    primaryContainer = Primary90,
+    secondaryContainer = Secondary90,
+    tertiaryContainer = Tertriary90,
     errorContainer = Error90,
 
-    onPrimaryContainer = Green10,
-    onSecondaryContainer = GreenGrey10,
-    onTertiaryContainer = Blue10,
+    onPrimaryContainer = Primary10,
+    onSecondaryContainer = Secondary10,
+    onTertiaryContainer = Tertriary10,
     onErrorContainer = Error10,
 
-    inversePrimary = Green80,
+    inversePrimary = Primary80,
 
     surfaceDim = LightGrey,
 
