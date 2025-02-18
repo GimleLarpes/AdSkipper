@@ -32,6 +32,13 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     private var _isServiceRunning = MutableStateFlow(false)
     var serviceRunningFlow: Flow<Boolean> = _isServiceRunning.asStateFlow()
 
+    companion object {
+        private var instance: AdSkipperAccessibilityService? = null
+        fun getInstance (): AdSkipperAccessibilityService? = instance
+
+        private var lastEventTime: Long = 0
+    }
+
     override fun onCreate() {
         super.onCreate()
         dataStoreManager = SettingsDataStoreManager(context = this)
@@ -70,13 +77,14 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     override fun onServiceConnected() {
         _isServiceRunning.value = true
         instance = this
+
+        // Set timeout
+        var info = instance!!.serviceInfo
+        info.notificationTimeout = getNotificationTimeout()
+        instance!!.serviceInfo = info
+
         Log.i(TAG, "onServiceConnected fired")
         super.onServiceConnected()
-    }
-
-    companion object {
-        private var instance: AdSkipperAccessibilityService? = null
-        fun getInstance (): AdSkipperAccessibilityService? = instance
     }
 
 
@@ -91,7 +99,11 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             dataStoreManager.enableAdMute.first()
         }
     }
-
+    private fun getNotificationTimeout(): Long {
+        return runBlocking {
+            dataStoreManager.notificationTimeout.first()
+        }
+    }
 
     // Action Functions
     private fun muteMedia() {
@@ -122,15 +134,17 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     }
 
     // TODO: Find panel ad close button
-    // TODO: Implement settings
     // TODO: Detect Ads when in inbetween state
 
-    override fun onAccessibilityEvent(event: AccessibilityEvent?) {
+    override fun onAccessibilityEvent(event: AccessibilityEvent) {
         try {
-            if (!isAdSkipEnabled()) {
-                Log.v(TAG, "Service is not supposed to be enabled.")
+            // Throttling onAccessibilityEvent calls
+            val currentEventTime = event.eventTime
+            if (currentEventTime - lastEventTime < serviceInfo.notificationTimeout || !isAdSkipEnabled()) {
                 return
             }
+            lastEventTime = currentEventTime
+
 
             // Target elements
             val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$AD_BADGE_MINIPLAYER")?.getOrNull(0)
@@ -139,9 +153,6 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             val adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0) // UNKNOWN
 
             // Other ad-related elements
-            //val adAppPromoCtaOverlay = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(APP_PROMO_AD_CTA_OVERLAY)?.getOrNull(0)
-            //val adLearnMore = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_LEARN_MORE_BUTTON_ID)?.getOrNull(0)
-            //val adCountdown = rootInActiveWindow?.findAccessibilityNodeInfosByViewId(AD_COUNTDOWN)?.getOrNull(0)
             //val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
             val test2 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}ad_cta_button")?.getOrNull(0)
             //val test3 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0)

@@ -45,8 +45,15 @@ class SettingsViewModel(
         viewModelScope.launch {
             dataStoreManager.setNotificationTimeout(value)
         }
-        // Update timeout
-        service?.serviceInfo?.notificationTimeout = value // This feels sketchy
+        setServiceTimeout(value)
+    }
+    private fun setServiceTimeout(value: Long) {
+        if (service != null) {
+            var info = service!!.serviceInfo
+
+            info.notificationTimeout = value
+            service!!.serviceInfo = info
+        }
     }
 
 

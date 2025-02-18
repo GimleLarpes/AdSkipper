@@ -1,6 +1,6 @@
 package com.gimlelarpes.adskipper
 
-import androidx.annotation.FloatRange
+import android.icu.text.DecimalFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -26,14 +25,11 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,11 +38,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.gimlelarpes.adskipper.ui.theme.Typography
 import kotlinx.coroutines.launch
-import java.sql.Array
 import kotlin.math.pow
-import kotlin.math.roundToInt
 import kotlin.math.roundToLong
 import kotlin.math.sqrt
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.material3.SliderDefaults
+import androidx.compose.ui.draw.scale
+
+val interactionSource = MutableInteractionSource()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,21 +82,38 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
             //Main column layout
             Column(
                 modifier = Modifier
-                    .fillMaxWidth(0.66f)
-                    .fillMaxHeight()
-                    .weight(1f, false)
-                    .padding(top = Typography.displayMedium.fontSize.value.dp),
+                    .fillMaxWidth(0.75f)
+                    .fillMaxHeight(),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 //Title
-                Text(text = stringResource(R.string.settings_title), style = Typography.displayMedium)
-                Spacer(modifier = Modifier.height(Typography.displayMedium.fontSize.value.dp / 2))
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f, true),
+                    verticalArrangement = Arrangement.Bottom,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = stringResource(R.string.settings_title),
+                        style = Typography.displayMedium
+                    )
+                    Spacer(modifier = Modifier.height(Typography.displayMedium.fontSize.value.dp / 2))
+                }
 
                 //Settings block
-                SettingsEntry(MuteSwitch(viewModel), R.string.ad_skip_mute_ads_description)
-                SettingsEntry(NotifTimeoutSlider(viewModel), R.string.ad_skip_notif_timeout_description)
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(4f, false),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+
+                    // Settings
+                    SettingsEntry(MuteSwitch(viewModel), R.string.ad_skip_mute_ads_description)
+                    SettingsEntry(NotifTimeoutSlider(viewModel), R.string.ad_skip_notif_timeout_description)
+                }
             }
         }
     }
@@ -124,7 +140,7 @@ fun SettingsEntry(entry: Unit, description: Int) {
                 textAlign = TextAlign.Center
             )
         }
-        Spacer(modifier = Modifier.height(Typography.labelSmall.lineHeight.value.dp / 2))
+        Spacer(modifier = Modifier.height(Typography.titleLarge.lineHeight.value.dp / 2))
     }
 }
 
@@ -163,13 +179,14 @@ fun MuteSwitch(viewModel: SettingsViewModel = viewModel()) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotifTimeoutSlider(viewModel: SettingsViewModel = viewModel()) {
     val notificationTimeout by viewModel.notificationTimeoutFlow.collectAsStateWithLifecycle(initialValue = 100)
 
     // Define ranges
     val positionRange: ClosedFloatingPointRange<Float> = 0f..10f
-    val timeoutRange: LongRange = LongRange(10, 500)
+    val timeoutRange: LongRange = LongRange(10, 1000)
 
     var sliderPosition = getFloatFromTimeout(notificationTimeout, timeoutRange = timeoutRange, positionRange = positionRange)
 
@@ -177,19 +194,56 @@ fun NotifTimeoutSlider(viewModel: SettingsViewModel = viewModel()) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // Setting text
         val typeFace = Typography.titleLarge
         Text(
             text = stringResource(R.string.ad_skip_notif_timeout),
             style = typeFace,
-            modifier = Modifier.padding(typeFace.fontSize.value.dp / 2)
+            modifier = Modifier
+                .offset(y = Typography.labelSmall.lineHeight.value.dp / 3)
         )
-        Slider(
-            value = sliderPosition,
-            onValueChange = { viewModel.setNotificationTimeout(getTimeoutFromFloat(it, timeoutRange = timeoutRange, positionRange = positionRange)) },
-            steps = 9,
-            valueRange = positionRange,
-        )
-        //Text(text = notificationTimeout.toString())
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+
+        ) {
+            // Slider
+            Slider(
+                modifier = Modifier.wrapContentSize()
+                    .weight(3f, false),
+                value = sliderPosition,
+                onValueChange = {
+                    viewModel.setNotificationTimeout(
+                        getTimeoutFromFloat(
+                            it,
+                            timeoutRange = timeoutRange,
+                            positionRange = positionRange
+                        )
+                    )
+                },
+                steps = 5,
+                valueRange = positionRange,
+                interactionSource = interactionSource,
+                thumb = {
+                    SliderDefaults.Thumb(
+                        modifier = Modifier.scale(scaleX = 1f, scaleY = 0.5f),
+                        interactionSource = interactionSource,
+                    )
+                }
+            )
+
+            // Polling rate text
+            var dispPollRate = 1000.0 / notificationTimeout
+            val df: DecimalFormat = if (dispPollRate < 2) DecimalFormat("#.#") else DecimalFormat("#")
+
+            Text(
+                modifier = Modifier.padding(horizontal = typeFace.fontSize.value.dp / 2)
+                    .weight(1f, false),
+                text = df.format(dispPollRate)+" Hz",
+            )
+        }
     }
 }
 
