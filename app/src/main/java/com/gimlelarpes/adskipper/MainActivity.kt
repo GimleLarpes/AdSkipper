@@ -31,13 +31,16 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController = navController,
-                    startDestination = Routes.SettingsPage,
+                    startDestination = Routes.HomePage,
                     builder = {
-                        composable(Routes.SettingsPage) {
-                            SettingsPage(navController, viewModel)
+                        composable(Routes.HomePage) {
+                            HomePage(navController, viewModel)
                         }
                         composable(Routes.LicensesPage) {
                             LicensesPage(navController)
+                        }
+                        composable(Routes.SettingsPage) {
+                            SettingsPage(navController, viewModel)
                         }
                     }
                 )

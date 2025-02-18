@@ -32,6 +32,7 @@ val GreenGrey90 = Color(0xFFCFE9DA)
 val Blue90 = Color(0xFFC1E8FC)
 val Error90 = Color(0xFFFFDAD6)
 
-val White = Color(0xFFDEDEDE)
+val Grey = Color(0xFFDEDEDE)
 val LightGrey = Color(0xFFE8E2D4)
+val White = Color(0xFFFFFFFF)
 val DarkGrey = Color(0xFF0D0D0D)

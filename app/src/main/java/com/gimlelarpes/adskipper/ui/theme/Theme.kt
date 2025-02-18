@@ -7,6 +7,7 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
@@ -32,7 +33,7 @@ private val DarkColorScheme = darkColorScheme(
 
     inversePrimary = Green80,
 
-    surfaceDim = DarkGrey
+    surfaceDim = DarkGrey,
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -41,10 +42,10 @@ private val LightColorScheme = lightColorScheme(
     tertiary = Blue80,
     error = Error80,
 
-    onPrimary = White,
-    onSecondary = White,
-    onTertiary = White,
-    onError = White,
+    onPrimary = Grey,
+    onSecondary = Grey,
+    onTertiary = Grey,
+    onError = Grey,
 
     primaryContainer = Green90,
     secondaryContainer = GreenGrey90,
@@ -58,7 +59,7 @@ private val LightColorScheme = lightColorScheme(
 
     inversePrimary = Green80,
 
-    surfaceDim = LightGrey
+    surfaceDim = LightGrey,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -73,7 +74,7 @@ fun AdSkipperTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     val colorScheme = when {
         dynamicColor -> {
@@ -84,10 +85,18 @@ fun AdSkipperTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
+    // Implement extended colors
+    val extendedColors = ExtendedColors(
+        surfaceHighContrast = if (darkTheme) DarkGrey else White,
     )
+
+    CompositionLocalProvider(
+        LocalExtendedColorScheme provides extendedColors
+    ) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = Typography,
+            content = content
+        )
+    }
 }

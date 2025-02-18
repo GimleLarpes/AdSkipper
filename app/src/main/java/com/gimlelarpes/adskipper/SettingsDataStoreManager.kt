@@ -42,7 +42,7 @@ class SettingsDataStoreManager(context: Context) {
     }
     suspend fun setEnableAdMute(value: Boolean) {
         dataStore.edit { preferences ->
-            preferences[Keys.SETTINGS_ENABLE_AD_SKIPPER_SERVICE] = value
+            preferences[Keys.SETTINGS_ENABLE_AD_MUTE] = value
         }
     }
     suspend fun setNotificationTimeout(value: Long) {

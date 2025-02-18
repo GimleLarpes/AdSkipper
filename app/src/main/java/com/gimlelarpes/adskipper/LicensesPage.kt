@@ -32,10 +32,13 @@ import androidx.navigation.NavController
 import com.gimlelarpes.adskipper.ui.theme.Typography
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import com.gimlelarpes.adskipper.ui.theme.AdSkipperTheme
+import com.gimlelarpes.adskipper.ui.theme.LocalExtendedColorScheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LicensesPage(navController: NavController) {
+    val extendedColors = LocalExtendedColorScheme.current
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -46,7 +49,7 @@ fun LicensesPage(navController: NavController) {
                         )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigate(Routes.SettingsPage) }) {
+                    IconButton(onClick = { navController.navigate(Routes.HomePage) }) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.navigate_up_button)
@@ -58,18 +61,20 @@ fun LicensesPage(navController: NavController) {
 
         //Top bar
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .background(MaterialTheme.colorScheme.surfaceContainerLowest),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            //License entries
-            DisplayLicense(R.string.license_adskipper, R.raw.license_adskipper)
-            DisplayLicense(R.string.license_fonts, R.raw.license_opensans)
+        AdSkipperTheme(dynamicColor = false) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState())
+                    .background(extendedColors.surfaceHighContrast),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                //License entries
+                DisplayLicense(R.string.license_adskipper, R.raw.license_adskipper)
+                DisplayLicense(R.string.license_fonts, R.raw.license_opensans)
+            }
         }
     }
 }
