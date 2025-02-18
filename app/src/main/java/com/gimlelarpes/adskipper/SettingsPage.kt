@@ -1,6 +1,7 @@
 package com.gimlelarpes.adskipper
 
 import android.icu.text.DecimalFormat
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
@@ -30,6 +32,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -41,9 +44,6 @@ import kotlinx.coroutines.launch
 import kotlin.math.pow
 import kotlin.math.roundToLong
 import kotlin.math.sqrt
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.material3.SliderDefaults
-import androidx.compose.ui.draw.scale
 
 val interactionSource = MutableInteractionSource()
 
@@ -89,18 +89,19 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
             ) {
 
                 //Title
+                val typeFace = Typography.displayMedium
                 Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f, true),
+                    .fillMaxSize()
+                    .weight(1f, false),
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         text = stringResource(R.string.settings_title),
-                        style = Typography.displayMedium
+                        style = typeFace
                     )
-                    Spacer(modifier = Modifier.height(Typography.displayMedium.fontSize.value.dp / 2))
                 }
+                Spacer(modifier = Modifier.height(typeFace.fontSize.value.dp / 2))
 
                 //Settings block
                 Column(modifier = Modifier
@@ -258,5 +259,3 @@ fun getFloatFromTimeout(value: Long, timeoutRange: LongRange, positionRange: Clo
     // Invert
     return positionRange.endInclusive - sqrt(relval) * (positionRange.endInclusive - positionRange.start) + positionRange.start
 }
-
-

@@ -28,11 +28,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.gimlelarpes.adskipper.ui.theme.AdSkipperTheme
+import com.gimlelarpes.adskipper.ui.theme.LocalExtendedColorScheme
 import com.gimlelarpes.adskipper.ui.theme.Typography
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import com.gimlelarpes.adskipper.ui.theme.AdSkipperTheme
-import com.gimlelarpes.adskipper.ui.theme.LocalExtendedColorScheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
