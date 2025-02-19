@@ -97,7 +97,7 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = stringResource(R.string.settings_title),
+                        text = stringResource(R.string.settings),
                         style = typeFace
                     )
                 }

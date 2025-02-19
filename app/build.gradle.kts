@@ -77,4 +77,5 @@ dependencies {
     implementation(libs.navigation.compose)
     implementation(libs.datastore.preferences)
     implementation(libs.ui.text.google.fonts)
+
 }

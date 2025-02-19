@@ -66,7 +66,7 @@ fun HomePage(navController: NavController, viewModel: SettingsViewModel) {
                 title = {},
                 actions = {
                     IconButton(onClick = { navController.navigate(Routes.SettingsPage) }) {
-                        Icon(Icons.Filled.Settings, contentDescription = "Settings Button")
+                        Icon(Icons.Filled.Settings, contentDescription = stringResource(R.string.settings))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent)

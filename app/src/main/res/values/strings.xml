@@ -2,19 +2,21 @@
     <string name="app_name">AdSkipper</string>
     <string name="accessibility_service_label">AdSkipper</string>
     <string name="accessibility_service_description">This service skips and optionally mutes advertisements on YouTube.</string>
+    <string name="navigate_up_button">navigate up</string>
 
     <!-- Settings UI -->
-    <string name="settings_title">Settings</string>
+    <string name="settings">Settings</string>
+    <string name="settings_title">AdSkipper Settings</string>
     <string name="ad_skip_skip_ads">Skip ads</string>
     <string name="ad_skip_mute_ads">Mute ads</string>
     <string name="ad_skip_mute_ads_description">Mutes media audio when an ad is playing</string>
     <string name="ad_skip_notif_timeout">Polling rate</string>
     <string name="ad_skip_notif_timeout_description">Higher values improve responsiveness but may reduce performance</string>
+
     <string name="ad_skip_disabled">AdSkip is disabled</string>
     <string name="ad_skip_enabled">AdSkip is enabled</string>
     <string name="ad_skip_starting">AdSkip is starting</string>
     <string name="ad_skip_stopping">AdSkip is stopping</string>
-    <string name="navigate_up_button">navigate up</string>
 
     <!-- Accessibility Service Dialog -->
     <string name="dialog_title">You\'re almost there!</string>
@@ -26,4 +28,8 @@
     <string name="open_source_licenses">Open source licenses</string>
     <string name="license_adskipper">AdSkipper</string>
     <string name="license_fonts">Fonts</string>
+
+    <!-- Error Messages -->
+    <string name="error_generic">Oops, Something went wrong…</string>
+    <string name="error_invalid_pth">AdSkipper isn\'t functioning as intended and may not be blocking all ads.\n\n Please visit github.com/gimlelarpes/adskipper to download the latest version.</string>
 </resources>
