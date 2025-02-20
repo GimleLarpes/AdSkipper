@@ -31,5 +31,5 @@
 
     <!-- Error Messages -->
     <string name="error_generic">Oops, Something went wrong…</string>
-    <string name="error_invalid_pth">AdSkipper isn\'t functioning as intended and may not be blocking all ads.\n\n Please visit github.com/gimlelarpes/adskipper to download the latest version.</string>
+    <string name="error_outdated">AdSkipper isn\'t functioning as intended and may not be blocking all ads.\n\n Please visit github.com/gimlelarpes/adskipper to download the latest version.</string>
 </resources>

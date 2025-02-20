@@ -21,7 +21,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     private val MODERN = "modern_"
     private val SKIP_AD_BUTTON = "skip_ad_button"
     private val SKIP_AD_BUTTON_MINIPLAYER = "miniplayer_skip_ad_button"
-    private val CLOSE_AD_PANEL_BUTTON_ID = "NOTHERE" //WHAT IS THE REAL RESOURCE ID?
+    private val CLOSE_AD_PANEL_BUTTON_ID = "" //WHAT IS THE REAL RESOURCE ID?
     private val AD_PROGRESS_TEXT = "ad_progress_text"
     private val AD_BADGE_MINIPLAYER = "miniplayer_ad_badge"
 
@@ -134,7 +134,8 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     }
 
     // TODO: Find panel ad close button (in a less horrible way)
-    // TODO: Detect Ads when in inbetween state
+    // TODO: Detect Ads when in inbetween state - mute whenever in inbetween state?
+    //         This would cause real content to get muted, but only in the inbetween state.
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         try {
@@ -150,16 +151,18 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$AD_BADGE_MINIPLAYER")?.getOrNull(0)
             val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$AD_PROGRESS_TEXT")?.getOrNull(0)
 
-            // This is absolutely horrid - maybe reverseengineer a better way using this info though?
-            var adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) //rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0) // UNKNOWN
-            if (adClosePanelButton!=null) {
-                adClosePanelButton = getChildFromPath(adClosePanelButton, "001000001")
+            // This is absolutely horrid - maybe reverse engineer a better way using this info though?
+            var adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) //rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
+            if (adClosePanelButton != null) {
+                adClosePanelButton =
+                    getChildFromPath(adClosePanelButton, "001000001") ?: // Website
+                    getChildFromPath(adClosePanelButton, "000000001") // App
             }
+            //Log.w(TAG, adClosePanelButton?.viewIdResourceName.toString())//DEBUG
 
             // Other ad-related elements
             //val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
             //val test2 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_close_button")?.getOrNull(0)
-            //val test3 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) // THIS TRIGGERS, too bad it's a huge class
 
 
             // Panels that aren't it (retest, since stuff broke before)
@@ -220,14 +223,15 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 if (test2.isClickable) {
                     Log.w(TAG, "ELEMENT CLICKABLE")
                 }
-            }
+            }*/
+            /*val test3 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) // Workaround
             if (test3 != null) { // Traverse Children
                 val tag = "engagement_panel"
                 Log.i(tag, "EXISTS") // This class is used to display the panel ads (and all other panels), works (not what i need tho)
 
-                //scanClickable(test3, "") // Returns correct input, problem lies in getChildFromPath
+                scanClickable(test3) // Returns correct input, problem lies in getChildFromPath
 
-                val path = "001000001"
+                /*val path = Website:"001000001", App:"000000001"
                 var target = getChildFromPath(test3, path)
                 val name = target?.viewIdResourceName
                 val isClickable = target?.isClickable
@@ -236,7 +240,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 Log.w(tag, "idx $path :: $name - text: $text - desc: $description - isClickable: $isClickable")
                 if (target?.isClickable==true) {
                     target.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                }
+                }*/
 
             }*/
 
@@ -285,6 +289,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     }
 }
 
+
 // Debug functions
 
 fun traverseChild(parent: AccessibilityNodeInfo) {
@@ -301,7 +306,7 @@ fun traverseChild(parent: AccessibilityNodeInfo) {
         Log.i(tag, "idx $i :: $name - text: $text - desc: $description - isClickable: $isClickable")
     }
 }
-fun scanClickable(origin: AccessibilityNodeInfo, path: String) {
+fun scanClickable(origin: AccessibilityNodeInfo, path: String = "") {
     val tag = origin.viewIdResourceName
     val nChildren = origin.childCount
 
@@ -332,7 +337,7 @@ fun scanClickable(origin: AccessibilityNodeInfo, path: String) {
     }
 
 }
-fun getChildFromPath(parent: AccessibilityNodeInfo, path: String): AccessibilityNodeInfo? {
+fun getChildFromPath(parent: AccessibilityNodeInfo?, path: String): AccessibilityNodeInfo? {
     // Construct tree
     var steps = arrayListOf<Int>()
     for (n in path) {
@@ -342,15 +347,19 @@ fun getChildFromPath(parent: AccessibilityNodeInfo, path: String): Accessibility
     // Traverse tree
     var currentParent = parent
     try {
-        for (i in steps) {
-            // Prevent error spam by exiting early
-            if (i > currentParent.childCount-1) { return null }
+        if (currentParent != null) {
+            for (i in steps) {
+                // Prevent error spam by exiting early
+                if (i > currentParent!!.childCount - 1) {
+                    return null
+                }
 
-            currentParent = currentParent.getChild(i)
+                currentParent = currentParent.getChild(i)
+            }
         }
 
     } catch (error: Exception) {
-        Log.e("getChildFromPath", R.string.error_invalid_pth.toString(), error)
+        Log.e("getChildFromPath", R.string.error_outdated.toString(), error)
         return null
     }
     return currentParent
