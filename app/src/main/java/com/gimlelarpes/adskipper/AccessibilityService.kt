@@ -13,6 +13,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import java.io.File
 
 class AdSkipperAccessibilityService: AccessibilityService() {
 
@@ -127,9 +128,9 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
     private fun closeAdPanel(adClosePanel: AccessibilityNodeInfo?) {
         if (adClosePanel?.isClickable == true) {
-            Log.v(TAG, "Close panel button is clickable, trying to click...")
+            /*Log.v(TAG, "Close panel button is clickable, trying to click...")
             adClosePanel.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            Log.i(TAG, "Yay, Clicked close panel button!")
+            Log.i(TAG, "Yay, Clicked close panel button!")*/
         }
     }
 
@@ -155,13 +156,12 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             var adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) //rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
             if (adClosePanelButton != null) {
                 adClosePanelButton =
-                    getChildFromPath(adClosePanelButton, "001000001") ?: // Website
-                    getChildFromPath(adClosePanelButton, "000000001") // App
+                    DebugTools.getChildFromPath(adClosePanelButton, "001000001") ?: // Website
+                    DebugTools.getChildFromPath(adClosePanelButton, "000000001") // App
             }
-            //Log.w(TAG, adClosePanelButton?.viewIdResourceName.toString())//DEBUG
 
             // Other ad-related elements
-            //val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
+            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}close")?.getOrNull(0)
             //val test2 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_close_button")?.getOrNull(0)
 
 
@@ -215,9 +215,11 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             // dislike_button
 
             //DEBUG STUFF
-            /*if (test != null) {
-                Log.w(TAG, "miniplayer_ad_skip THING EXISTS") // Can indeed exist, doesn't seem to always work
-            }*/
+            DebugTools.scanFromXML(R.raw.id_scan_list, BASE, applicationContext, rootInActiveWindow)
+
+            if (test != null) {
+                Log.w(TAG, "THING EXISTS") // Can indeed exist, doesn't seem to always work
+            }
             /*if (test2 != null) {
                 Log.w(TAG, "ELEMENT EXISTS")
                 if (test2.isClickable) {
@@ -229,10 +231,10 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 val tag = "engagement_panel"
                 Log.i(tag, "EXISTS") // This class is used to display the panel ads (and all other panels), works (not what i need tho)
 
-                scanClickable(test3) // Returns correct input, problem lies in getChildFromPath
+                DebugTools.scanClickable(test3) // Returns correct input, problem lies in getChildFromPath
 
                 /*val path = Website:"001000001", App:"000000001"
-                var target = getChildFromPath(test3, path)
+                var target = DebugTools.getChildFromPath(test3, path)
                 val name = target?.viewIdResourceName
                 val isClickable = target?.isClickable
                 val text = target?.text
@@ -287,80 +289,4 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             Log.e(TAG, R.string.error_generic.toString(), error)
         }
     }
-}
-
-
-// Debug functions
-
-fun traverseChild(parent: AccessibilityNodeInfo) {
-    val tag = parent.viewIdResourceName
-    val nChildren = parent.childCount
-
-    for (i in 0..nChildren-1) {
-        val child = parent.getChild(i)
-
-        val name = child.viewIdResourceName
-        val isClickable = child.isClickable
-        val text = child.text
-        val description = child.contentDescription
-        Log.i(tag, "idx $i :: $name - text: $text - desc: $description - isClickable: $isClickable")
-    }
-}
-fun scanClickable(origin: AccessibilityNodeInfo, path: String = "") {
-    val tag = origin.viewIdResourceName
-    val nChildren = origin.childCount
-
-    for (i in 0..nChildren-1) {
-
-        val child = origin.getChild(i)
-        val newPath = path + i.toString() // Trace steps taken
-
-        val isClickable = child.isClickable
-        if (isClickable) {
-            val name = child.viewIdResourceName
-            val text = child.text
-            val description = child.contentDescription
-            Log.i(
-                tag,
-                "pth $newPath :: $name - text: $text - desc: $description - isClickable: $isClickable"
-            )
-        } else {
-            val name = child.viewIdResourceName
-            val text = child.text
-            val description = child.contentDescription
-            Log.v(
-                tag,
-                "pth $newPath :: $name - text: $text - desc: $description - isClickable: $isClickable"
-            )
-        }
-        scanClickable(child, newPath)
-    }
-
-}
-fun getChildFromPath(parent: AccessibilityNodeInfo?, path: String): AccessibilityNodeInfo? {
-    // Construct tree
-    var steps = arrayListOf<Int>()
-    for (n in path) {
-        steps.add(n.digitToInt())
-    }
-
-    // Traverse tree
-    var currentParent = parent
-    try {
-        if (currentParent != null) {
-            for (i in steps) {
-                // Prevent error spam by exiting early
-                if (i > currentParent!!.childCount - 1) {
-                    return null
-                }
-
-                currentParent = currentParent.getChild(i)
-            }
-        }
-
-    } catch (error: Exception) {
-        Log.e("getChildFromPath", R.string.error_outdated.toString(), error)
-        return null
-    }
-    return currentParent
 }

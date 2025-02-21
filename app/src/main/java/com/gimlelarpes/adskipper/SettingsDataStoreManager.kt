@@ -47,7 +47,7 @@ class SettingsDataStoreManager(context: Context) {
     }
     suspend fun setNotificationTimeout(value: Long) {
         dataStore.edit { preferences ->
-            preferences[Keys.SETTINGS_NOTIFICATION_TIMEOUT] = value
+            preferences[Keys.SETTINGS_NOTIFICATION_TIMEOUT] = 10000//value
         }
     }
 }
