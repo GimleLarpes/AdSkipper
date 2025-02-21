@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import java.io.File
 
 class AdSkipperAccessibilityService: AccessibilityService() {
 
@@ -22,7 +21,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     private val MODERN = "modern_"
     private val SKIP_AD_BUTTON = "skip_ad_button"
     private val SKIP_AD_BUTTON_MINIPLAYER = "miniplayer_skip_ad_button"
-    private val CLOSE_AD_PANEL_BUTTON_ID = "" //WHAT IS THE REAL RESOURCE ID?
+    private val CLOSE_AD_PANEL_BUTTON_ID = "" // CLOSE PANEL BUTTON RESOURCE ID (doesn't currently exist)
     private val AD_PROGRESS_TEXT = "ad_progress_text"
     private val AD_BADGE_MINIPLAYER = "miniplayer_ad_badge"
 
@@ -128,9 +127,9 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
     private fun closeAdPanel(adClosePanel: AccessibilityNodeInfo?) {
         if (adClosePanel?.isClickable == true) {
-            /*Log.v(TAG, "Close panel button is clickable, trying to click...")
+            Log.v(TAG, "Close panel button is clickable, trying to click...")
             adClosePanel.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-            Log.i(TAG, "Yay, Clicked close panel button!")*/
+            Log.i(TAG, "Yay, Clicked close panel button!")
         }
     }
 
@@ -152,98 +151,30 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$AD_BADGE_MINIPLAYER")?.getOrNull(0)
             val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$AD_PROGRESS_TEXT")?.getOrNull(0)
 
-            // This is absolutely horrid - maybe reverse engineer a better way using this info though?
+            // This is absolutely horrid - the button doesn't have an ID
             var adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) //rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
             if (adClosePanelButton != null) {
                 adClosePanelButton =
-                    DebugTools.getChildFromPath(adClosePanelButton, "001000001") ?: // Website
-                    DebugTools.getChildFromPath(adClosePanelButton, "000000001") // App
+                    getChildFromPath(adClosePanelButton, "001000001") ?: // Website
+                    getChildFromPath(adClosePanelButton, "000000001") // App
             }
 
-            // Other ad-related elements
-            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}close")?.getOrNull(0)
-            //val test2 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_close_button")?.getOrNull(0)
-
-
-            // Panels that aren't it (retest, since stuff broke before)
-            // default_promo_panel
-            // default_promo_panel_modern_type
-            // app_engagement_panel
-
-            //// main_companion_container
-            // ad_companion_card
-            // app_promotion_companion_card
-            // compact_companion_card
-            // multi_item_companion_card
-            // shopping_companion_card
-            // element_companion_card
-            // suggested_videos_companion_card
-
-            //// promoted_sparkles_text_ctd_home_themed_cta_compact_form_landscape
-            // muted_ad_view
-            // click_overlay
-            // cta_button_wrapper
-            // promoted_cta_button_horizontal_fill_wrapper
-            // price
-            // rating
-            // rating_text
-            // ad_attribution
-            // ratings_container
-            // description
-            // description_container
-            // title
-            // title_frame
-            // close_button_or_contextual_menu_anchor_home
-            // title_row
-            // overlay_badge_layout
-            // icon
-            // second_thumbnail
-            // thumbnail
-            // thumbnail_wrapper
-            // inner_background
-            // content_background
-            // content_layout
-            // ad_view
-
-            // ad_cta_button
-            // ad_disclosure_banner_navigate_arrow
-            // ad_disclosure_banner_side_bar
-            // ad_disclosure_container
-            // collapse_cta_container
-            // collapsible_ad_cta_overlay
-            // dismiss_button
-            // dislike_button
 
             //DEBUG STUFF
-            DebugTools.scanFromXML(R.raw.id_scan_list, BASE, applicationContext, rootInActiveWindow)
-
+            //DebugTools.scanFromXML(R.raw.id_scan_list, BASE, applicationContext, rootInActiveWindow)
+            /*val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) // Workaround
             if (test != null) {
-                Log.w(TAG, "THING EXISTS") // Can indeed exist, doesn't seem to always work
-            }
-            /*if (test2 != null) {
-                Log.w(TAG, "ELEMENT EXISTS")
-                if (test2.isClickable) {
-                    Log.w(TAG, "ELEMENT CLICKABLE")
-                }
-            }*/
-            /*val test3 = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) // Workaround
-            if (test3 != null) { // Traverse Children
                 val tag = "engagement_panel"
-                Log.i(tag, "EXISTS") // This class is used to display the panel ads (and all other panels), works (not what i need tho)
+                Log.i(tag, "EXISTS")
 
-                DebugTools.scanClickable(test3) // Returns correct input, problem lies in getChildFromPath
+                DebugTools.scanClickable(test)
 
                 /*val path = Website:"001000001", App:"000000001"
-                var target = DebugTools.getChildFromPath(test3, path)
-                val name = target?.viewIdResourceName
-                val isClickable = target?.isClickable
-                val text = target?.text
-                val description = target?.contentDescription
-                Log.w(tag, "idx $path :: $name - text: $text - desc: $description - isClickable: $isClickable")
+                var target = DebugTools.getChildFromPath(test, path)
+                Log.w(tag, "idx $path :: ${target?.viewIdResourceName} - text: ${target?.text} - desc: ${target?.contentDescription} - isClickable: ${target?.isClickable}")
                 if (target?.isClickable==true) {
                     target.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                 }*/
-
             }*/
 
 
@@ -289,4 +220,32 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             Log.e(TAG, R.string.error_generic.toString(), error)
         }
     }
+}
+
+private fun getChildFromPath(parent: AccessibilityNodeInfo?, path: String): AccessibilityNodeInfo? {
+    // Construct tree
+    var steps = arrayListOf<Int>()
+    for (n in path) {
+        steps.add(n.digitToInt())
+    }
+
+    // Traverse tree
+    var currentParent = parent
+    try {
+        if (currentParent != null) {
+            for (i in steps) {
+                // Prevent error spam by exiting early
+                if (i > currentParent!!.childCount - 1) {
+                    return null
+                }
+
+                currentParent = currentParent.getChild(i)
+            }
+        }
+
+    } catch (error: Exception) {
+        Log.e("getChildFromPath", R.string.error_outdated.toString(), error)
+        return null
+    }
+    return currentParent
 }
