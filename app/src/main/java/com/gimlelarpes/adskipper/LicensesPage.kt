@@ -73,6 +73,8 @@ fun LicensesPage(navController: NavController) {
                 //License entries
                 DisplayLicense(R.string.license_adskipper, R.raw.license_adskipper)
                 DisplayLicense(R.string.license_fonts, R.raw.license_opensans)
+                DisplayLicense(R.string.license_aosp, R.raw.license_aosp)
+                DisplayLicense(R.string.license_kernel, R.raw.license_kernel)
             }
         }
     }

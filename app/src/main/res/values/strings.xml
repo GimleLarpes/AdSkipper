@@ -28,6 +28,8 @@
     <string name="open_source_licenses">Open source licenses</string>
     <string name="license_adskipper">AdSkipper</string>
     <string name="license_fonts">Fonts</string>
+    <string name="license_aosp">Android open source project</string>
+    <string name="license_kernel">Linux kernel</string>
 
     <!-- Error Messages -->
     <string name="error_generic">Oops, Something went wrong…</string>
