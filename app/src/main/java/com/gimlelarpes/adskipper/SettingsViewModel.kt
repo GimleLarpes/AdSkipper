@@ -90,6 +90,7 @@ class SettingsViewModel(
     fun disableAccessibilityService() {
         service?.disableSelf()
     }
+
 }
 
 class SettingsViewModelFactory(

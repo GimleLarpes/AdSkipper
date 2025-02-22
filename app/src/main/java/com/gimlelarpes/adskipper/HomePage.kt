@@ -44,6 +44,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -164,6 +165,7 @@ fun AdSkipSwitch(viewModel: SettingsViewModel = viewModel()) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         val typeFace = Typography.titleLarge
+        val haptic = LocalHapticFeedback.current
 
         Text(
             text = stringResource(R.string.ad_skip_skip_ads),
@@ -176,6 +178,7 @@ fun AdSkipSwitch(viewModel: SettingsViewModel = viewModel()) {
                 coroutineScope.launch {
                     setEnableAccessibilityService(viewModel, newChecked)
                 }
+                haptic.performHapticFeedback(hapticTypeSwitch(newChecked))
             },
             thumbContent = if (isAdSkipEnabled xor isServiceRunning) {
                 {

@@ -33,6 +33,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -113,7 +114,7 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
 
                     // Settings
                     SettingsEntry(MuteSwitch(viewModel), R.string.ad_skip_mute_ads_description)
-                    SettingsEntry(NotifTimeoutSlider(viewModel), R.string.ad_skip_notif_timeout_description)
+                    SettingsEntry(NotificationTimeoutSlider(viewModel), R.string.ad_skip_notif_timeout_description)
                 }
             }
         }
@@ -155,6 +156,7 @@ fun MuteSwitch(viewModel: SettingsViewModel = viewModel()) {
         verticalAlignment = Alignment.CenterVertically
     ) {
         val typeFace = Typography.titleLarge
+        val haptic = LocalHapticFeedback.current
 
         Text(
             text = stringResource(R.string.ad_skip_mute_ads),
@@ -167,6 +169,7 @@ fun MuteSwitch(viewModel: SettingsViewModel = viewModel()) {
                 coroutineScope.launch {
                     viewModel.setEnableAdMute(newChecked)
                 }
+                haptic.performHapticFeedback(hapticTypeSwitch(newChecked))
             },
             thumbContent = if (isAdMuteEnabled) {
                 {
@@ -182,7 +185,7 @@ fun MuteSwitch(viewModel: SettingsViewModel = viewModel()) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotifTimeoutSlider(viewModel: SettingsViewModel = viewModel()) {
+fun NotificationTimeoutSlider(viewModel: SettingsViewModel = viewModel()) {
     val notificationTimeout by viewModel.notificationTimeoutFlow.collectAsStateWithLifecycle(initialValue = 100)
 
     // Define ranges
@@ -211,6 +214,8 @@ fun NotifTimeoutSlider(viewModel: SettingsViewModel = viewModel()) {
 
         ) {
             // Slider
+            val haptic = LocalHapticFeedback.current
+            var lastValue: Float = sliderPosition
             Slider(
                 modifier = Modifier.wrapContentSize()
                     .weight(3f, false),
@@ -223,6 +228,8 @@ fun NotifTimeoutSlider(viewModel: SettingsViewModel = viewModel()) {
                             positionRange = positionRange
                         )
                     )
+                    if (it != lastValue) { haptic.performHapticFeedback(hapticTypeSlider()) }
+                    lastValue = it
                 },
                 steps = 5,
                 valueRange = positionRange,
