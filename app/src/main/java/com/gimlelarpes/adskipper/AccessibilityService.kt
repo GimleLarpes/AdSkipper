@@ -39,6 +39,8 @@ class AdSkipperAccessibilityService: AccessibilityService() {
         fun getInstance (): AdSkipperAccessibilityService? = instance
 
         private var lastEventTime: Long = 0
+        private var adVisible: Boolean = false
+        private var bStateOld: Boolean = false
     }
 
     override fun onCreate() {
@@ -144,7 +146,6 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 return
             }
             lastEventTime = currentEventTime
-            val adVisible = mutableStateOf(false)
 
 
             // Target elements
@@ -183,12 +184,14 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             if (adProgressText==null && miniPlayer==null && adClosePanelButton==null) {
                 // Detect in-between state, TODO: Get in-between in one call
                 val bState = (rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$BSTATE")?.getOrNull(0)!=null && rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}modern_miniplayer_close")?.getOrNull(0)==null)
-                if (adVisible.value && bState) {
+                if (adVisible && (bState || bStateOld)) {
+                    bStateOld = bState
                     return
                 }
+                bStateOld = bState // bState lags behind, this is to prevent audio leaking
 
                 unMuteMedia()
-                adVisible.value = false
+                adVisible = false
                 Log.v(TAG, "No ads visible.")
                 return
 
@@ -207,7 +210,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                     rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
                 }
                 Log.v(TAG, "Ad is visible, attempting to skip...")
-                adVisible.value = true
+                adVisible = true
 
                 // Ad visible
                 muteMedia()
@@ -218,7 +221,6 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 if (adSkipButton?.isClickable == true) {
                     Log.v(TAG, "Skip button is clickable, trying to click...")
                     adSkipButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
-                    adVisible.value = false
                     Log.i(TAG, "Yay, Clicked skip button!")
                 } else {
                     Log.v(TAG, "Ad not skippable yet.")
