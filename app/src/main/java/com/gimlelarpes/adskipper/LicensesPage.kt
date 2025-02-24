@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,6 +38,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun LicensesPage(navController: NavController) {
     val extendedColors = LocalExtendedColorScheme.current
+    val scrollState = rememberLazyListState()
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -59,22 +61,27 @@ fun LicensesPage(navController: NavController) {
         }
 
         //Top bar
+        // TODO: Fix ScrollState not being saved across config changes
     ) { innerPadding ->
         AdSkipperTheme(dynamicColor = false) {
-            Column(
+            LazyColumn(
+                state = scrollState,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding)
-                    .verticalScroll(rememberScrollState())
                     .background(extendedColors.surfaceHighContrast),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 //License entries
-                DisplayLicense(R.string.license_adskipper, R.raw.license_adskipper)
-                DisplayLicense(R.string.license_fonts, R.raw.license_opensans)
-                DisplayLicense(R.string.license_aosp, R.raw.license_aosp)
-                DisplayLicense(R.string.license_kernel, R.raw.license_kernel)
+                items(4) { index ->
+                    when (index) {
+                        0 -> DisplayLicense(R.string.license_adskipper, R.raw.license_adskipper)
+                        1 -> DisplayLicense(R.string.license_fonts, R.raw.license_opensans)
+                        2 -> DisplayLicense(R.string.license_aosp, R.raw.license_aosp)
+                        3 -> DisplayLicense(R.string.license_kernel, R.raw.license_kernel)
+                    }
+                }
             }
         }
     }

@@ -162,12 +162,12 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
             //DEBUG STUFF
             //DebugTools.scanFromXML(R.raw.id_scan_list, BASE, applicationContext, rootInActiveWindow)
-            /*val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) // Workaround
+            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}standalone_ad_badge_small_frame")?.getOrNull(0) // Workaround
             if (test != null) {
                 val tag = "engagement_panel"
                 Log.i(tag, "EXISTS")
 
-                DebugTools.scanClickable(test)
+                //DebugTools.scanClickable(test)
 
                 /*val path = Website:"001000001", App:"000000001"
                 var target = DebugTools.getChildFromPath(test, path)
@@ -175,7 +175,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 if (target?.isClickable==true) {
                     target.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                 }*/
-            }*/
+            }
 
 
             // Visibility check
@@ -209,7 +209,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 // Skip ad
                 if (adSkipButton?.isClickable == true) {
                     Log.v(TAG, "Skip button is clickable, trying to click...")
-                    adSkipButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    //adSkipButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                     Log.i(TAG, "Yay, Clicked skip button!")
                 } else {
                     Log.v(TAG, "Ad not skippable yet.")

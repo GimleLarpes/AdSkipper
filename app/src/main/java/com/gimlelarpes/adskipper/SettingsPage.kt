@@ -1,5 +1,6 @@
 package com.gimlelarpes.adskipper
 
+import com.gimlelarpes.adskipper.BuildConfig
 import android.icu.text.DecimalFormat
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -17,9 +18,12 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -33,6 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -84,16 +89,15 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth(0.75f)
-                    .fillMaxHeight(),
+                    .fillMaxHeight()
+                    .weight(1f, false),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
                 //Title
                 val typeFace = Typography.displayMedium
-                Column(modifier = Modifier
-                    .fillMaxSize()
-                    .weight(1f, false),
+                Column(
                     verticalArrangement = Arrangement.Bottom,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -102,12 +106,13 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                         style = typeFace
                     )
                 }
-                Spacer(modifier = Modifier.height(typeFace.fontSize.value.dp / 2))
+                Spacer(modifier = Modifier
+                    .height(typeFace.fontSize.value.dp / 2)
+                    .weight(0.5f, false)
+                )
 
                 //Settings block
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(4f, false),
+                Column(
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -116,6 +121,16 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                     SettingsEntry(MuteSwitch(viewModel), R.string.ad_skip_mute_ads_description)
                     SettingsEntry(NotificationTimeoutSlider(viewModel), R.string.ad_skip_notif_timeout_description)
                 }
+            }
+
+            //Footer
+            val buildVersion: String = stringResource(R.string.app_name) +"-"+ BuildConfig.VERSION_NAME +"-"+ BuildConfig.BUILD_TYPE
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = buildVersion, style = Typography.labelSmall)
+                Text(text = BuildConfig.APPLICATION_ID, style = Typography.labelSmall)
             }
         }
     }
