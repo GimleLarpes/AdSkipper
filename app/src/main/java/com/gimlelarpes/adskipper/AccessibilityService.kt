@@ -20,7 +20,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     private val TAG = "AdSkipperService"
     private val BASE = "com.google.android.youtube:id/"
     private val MODERN = "modern_"
-    private val BSTATE = "fab_container" // Not perfect, also triggers on normal miniplayer
+    private val BSTATE = "fab_container"
     private val SKIP_AD_BUTTON = "skip_ad_button"
     private val SKIP_AD_BUTTON_MINIPLAYER = "miniplayer_skip_ad_button"
     private val CLOSE_AD_PANEL_BUTTON_ID = "" // CLOSE PANEL BUTTON RESOURCE ID (doesn't currently exist)
@@ -152,7 +152,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
             val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$AD_BADGE_MINIPLAYER")?.getOrNull(0)
             val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$AD_PROGRESS_TEXT")?.getOrNull(0)
 
-            // This is absolutely horrid - the button doesn't have an ID TODO: Find panel ad close button (in a less horrible way)
+            // This is absolutely horrid - the button doesn't have an ID - TODO: Find panel ad close button (in a less horrible way)
             var adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) //rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
             if (adClosePanelButton != null) {
                 adClosePanelButton =
@@ -162,9 +162,8 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
 
             //DEBUG STUFF
-            //
             //DebugTools.scanFromXML(R.raw.id_scan_list, BASE, applicationContext, rootInActiveWindow)
-            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}modern_miniplayer_close")?.getOrNull(0) // Workaround
+            /*test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}fab_container")?.getOrNull(0)
             if (test != null) {
                 val tag = "engagement_panel"
                 Log.i(tag, "EXISTS")
@@ -177,13 +176,13 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 if (target?.isClickable==true) {
                     target.performAction(AccessibilityNodeInfo.ACTION_CLICK)
                 }*/
-            }
+            }*/
 
 
             // Visibility check
             if (adProgressText==null && miniPlayer==null && adClosePanelButton==null) {
-                // Detect in-between state, TODO: Get in-between in one call
-                val bState = (rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$BSTATE")?.getOrNull(0)!=null && rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}modern_miniplayer_close")?.getOrNull(0)==null)
+                // Detect in-between state
+                val bState = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$BSTATE")?.getOrNull(0) != null
                 if (adVisible && (bState || bStateOld)) {
                     bStateOld = bState
                     return
@@ -221,6 +220,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 if (adSkipButton?.isClickable == true) {
                     Log.v(TAG, "Skip button is clickable, trying to click...")
                     adSkipButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    adVisible = false
                     Log.i(TAG, "Yay, Clicked skip button!")
                 } else {
                     Log.v(TAG, "Ad not skippable yet.")
