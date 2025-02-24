@@ -181,7 +181,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
             // Visibility check
             if (adProgressText==null && miniPlayer==null && adClosePanelButton==null) {
-                // Detect in-between state, WIP TODO: Get in-between in one call
+                // Detect in-between state, TODO: Get in-between in one call
                 val bState = (rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$BSTATE")?.getOrNull(0)!=null && rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}modern_miniplayer_close")?.getOrNull(0)==null)
                 if (adVisible.value && bState) {
                     return

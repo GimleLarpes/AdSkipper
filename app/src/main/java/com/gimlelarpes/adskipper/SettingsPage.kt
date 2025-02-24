@@ -1,6 +1,5 @@
 package com.gimlelarpes.adskipper
 
-import com.gimlelarpes.adskipper.BuildConfig
 import android.icu.text.DecimalFormat
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -18,12 +17,9 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
@@ -37,7 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -91,7 +86,7 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                     .fillMaxWidth(0.75f)
                     .fillMaxHeight()
                     .weight(1f, false),
-                verticalArrangement = Arrangement.Top,
+                verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
 
@@ -116,11 +111,14 @@ fun SettingsPage(navController: NavController, viewModel: SettingsViewModel) {
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-
                     // Settings
                     SettingsEntry(MuteSwitch(viewModel), R.string.ad_skip_mute_ads_description)
                     SettingsEntry(NotificationTimeoutSlider(viewModel), R.string.ad_skip_notif_timeout_description)
                 }
+                Spacer(modifier = Modifier
+                    .height(typeFace.fontSize.value.dp * 8)
+                    .weight(0.5f, false)
+                )
             }
 
             //Footer
