@@ -8,6 +8,7 @@ import android.media.AudioManager
 import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import android.view.accessibility.AccessibilityNodeInfo
+import androidx.compose.runtime.mutableStateOf
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,6 +20,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
     private val TAG = "AdSkipperService"
     private val BASE = "com.google.android.youtube:id/"
     private val MODERN = "modern_"
+    private val BSTATE = "fab_container" // Not perfect, also triggers on normal miniplayer
     private val SKIP_AD_BUTTON = "skip_ad_button"
     private val SKIP_AD_BUTTON_MINIPLAYER = "miniplayer_skip_ad_button"
     private val CLOSE_AD_PANEL_BUTTON_ID = "" // CLOSE PANEL BUTTON RESOURCE ID (doesn't currently exist)
@@ -133,9 +135,6 @@ class AdSkipperAccessibilityService: AccessibilityService() {
         }
     }
 
-    // TODO: Find panel ad close button (in a less horrible way)
-    // TODO: Detect Ads when in inbetween state - mute whenever in inbetween state?
-    //         This would cause real content to get muted, but only in the inbetween state.
 
     override fun onAccessibilityEvent(event: AccessibilityEvent) {
         try {
@@ -145,13 +144,14 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 return
             }
             lastEventTime = currentEventTime
+            val adVisible = mutableStateOf(false)
 
 
             // Target elements
             val miniPlayer = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$AD_BADGE_MINIPLAYER")?.getOrNull(0)
             val adProgressText = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$AD_PROGRESS_TEXT")?.getOrNull(0)
 
-            // This is absolutely horrid - the button doesn't have an ID
+            // This is absolutely horrid - the button doesn't have an ID TODO: Find panel ad close button (in a less horrible way)
             var adClosePanelButton = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}engagement_panel")?.getOrNull(0) //rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$CLOSE_AD_PANEL_BUTTON_ID")?.getOrNull(0)
             if (adClosePanelButton != null) {
                 adClosePanelButton =
@@ -161,8 +161,9 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
 
             //DEBUG STUFF
+            //
             //DebugTools.scanFromXML(R.raw.id_scan_list, BASE, applicationContext, rootInActiveWindow)
-            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}standalone_ad_badge_small_frame")?.getOrNull(0) // Workaround
+            val test = rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}modern_miniplayer_close")?.getOrNull(0) // Workaround
             if (test != null) {
                 val tag = "engagement_panel"
                 Log.i(tag, "EXISTS")
@@ -180,13 +181,19 @@ class AdSkipperAccessibilityService: AccessibilityService() {
 
             // Visibility check
             if (adProgressText==null && miniPlayer==null && adClosePanelButton==null) {
+                // Detect in-between state, WIP TODO: Get in-between in one call
+                val bState = (rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$BSTATE")?.getOrNull(0)!=null && rootInActiveWindow?.findAccessibilityNodeInfosByViewId("${BASE}modern_miniplayer_close")?.getOrNull(0)==null)
+                if (adVisible.value && bState) {
+                    return
+                }
+
                 unMuteMedia()
+                adVisible.value = false
                 Log.v(TAG, "No ads visible.")
                 return
 
             } else if (adProgressText==null && miniPlayer==null) {
                 closeAdPanel(adClosePanelButton)
-                unMuteMedia()
                 return
 
             } else {
@@ -200,6 +207,7 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                     rootInActiveWindow?.findAccessibilityNodeInfosByViewId("$BASE$MODERN$SKIP_AD_BUTTON_MINIPLAYER")?.getOrNull(0)
                 }
                 Log.v(TAG, "Ad is visible, attempting to skip...")
+                adVisible.value = true
 
                 // Ad visible
                 muteMedia()
@@ -209,7 +217,8 @@ class AdSkipperAccessibilityService: AccessibilityService() {
                 // Skip ad
                 if (adSkipButton?.isClickable == true) {
                     Log.v(TAG, "Skip button is clickable, trying to click...")
-                    //adSkipButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    adSkipButton.performAction(AccessibilityNodeInfo.ACTION_CLICK)
+                    adVisible.value = false
                     Log.i(TAG, "Yay, Clicked skip button!")
                 } else {
                     Log.v(TAG, "Ad not skippable yet.")
